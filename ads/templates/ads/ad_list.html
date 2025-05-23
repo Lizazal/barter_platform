@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Список объявлений</h2>
+    <form method="get">
+        <input type="text" name="q" placeholder="Поиск..." value="{{ query }}">
+        <input type="text" name="category" placeholder="Категория" value="{{ category }}">
+        <input type="text" name="condition" placeholder="Состояние" value="{{ condition }}">
+        <button type="submit">Найти</button>
+    </form>
+    <p><a href="{% url 'ads:create_ad' %}">Создать объявление</a></p>
+    {% for ad in page_obj %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+            <h3>{{ ad.title }}</h3>
+            <p><strong>Категория:</strong> {{ ad.category }}</p>
+            <p><strong>Состояние:</strong> {{ ad.condition }}</p>
+            <p><strong>Описание:</strong> {{ ad.description }}</p>
+            {% if ad.image_url %}
+                <img src="{{ ad.image_url }}" alt="Изображение" style="max-width: 200px;">
+            {% endif %}
+            <p><em>Опубликовано {{ ad.created_at|date:"d.m.Y H:i" }} пользователем {{ ad.user.username }}</em></p>
+            {% if request.user == ad.user %}
+                <p><a href="{% url 'ads:edit_ad' ad.id %}">Редактировать</a> |
+                    <a href="{% url 'ads:delete_ad' ad.id %}">Удалить</a></p>
+            {% endif %}
+            {% if request.user != ad.user %}
+                <form method="post" action="{% url 'ads:create_proposal' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="ad_receiver" value="{{ ad.id }}">
+                    <label for="ad_sender">Выберите ваше объявление:</label>
+                    <select name="ad_sender" required>
+                        {% for my_ad in request.user.ad_set.all %}
+                            <option value="{{ my_ad.id }}">{{ my_ad.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="comment">Комментарий:</label>
+                    <input type="text" name="comment">
+                    <button type="submit">Предложить обмен</button>
+                </form>
+            {% endif %}
+
+        </div>
+    {% empty %}
+        <p>Нет подходящих объявлений.</p>
+    {% endfor %}
+    <div>
+        <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        <div>
+            {% if page_obj.has_previous %}
+                <a href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if condition %}condition={{ condition }}&{% endif %}page={{ page_obj.previous_page_number }}">Назад</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if condition %}condition={{ condition }}&{% endif %}page={{ page_obj.next_page_number }}">Вперёд</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

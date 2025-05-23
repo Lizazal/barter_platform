@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Отмена предложения</h2>
+    <p>Вы уверены, что хотите отменить предложение об обмене на <strong>{{ proposal.ad_receiver.title }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Подтвердить отмену</button>
+        <a href="{% url 'ads:proposal_list' %}">Отмена</a>
+    </form>
+{% endblock content %}

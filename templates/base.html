@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бартерная платформа</title>
+</head>
+<body>
+    <header>
+        <nav style="margin-bottom: 20px;">
+            <a href="{% url 'ads:ad_list' %}">Объявления</a> |
+            <a href="{% url 'ads:proposal_list' %}">Обмены</a> |
+            {% if user.is_authenticated %}
+                Привет, {{ user.username }} |
+                <a href="{% url 'logout' %}?next={% url 'ads:ad_list' %}">Выйти</a>
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'ads:ad_list' %}">Войти</a> |
+                <a href="{% url 'register' %}">Регистрация</a>
+            {% endif %}
+        </nav>
+        <hr>
+    </header>
+    {% block content %}{% endblock content %}
+</body>
+</html>

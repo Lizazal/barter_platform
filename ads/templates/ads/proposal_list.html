@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Предложения обмена</h2>
+    <form method="get">
+        <input type="text" name="sender" placeholder="Отправитель" value="{{ sender }}">
+        <input type="text" name="receiver" placeholder="Получатель" value="{{ receiver }}">
+        <select name="status">
+            <option value="">Любой статус</option>
+            <option value="awaits" {% if status == 'awaits' %}selected{% endif %}>ожидает</option>
+            <option value="accepted" {% if status == 'accepted' %}selected{% endif %}>принята</option>
+            <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>отклонена</option>
+        </select>
+        <button type="submit">Фильтровать</button>
+    </form>
+    <p>
+        <a href="{% url 'ads:create_proposal' %}">Создать предложение обмена</a>
+    </p>
+    {% for proposal in proposals %}
+        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+            <p><strong>От:</strong> {{ proposal.ad_sender.user.username }} ({{ proposal.ad_sender.title }})</p>
+            <p><strong>Кому:</strong> {{ proposal.ad_receiver.user.username }} ({{ proposal.ad_receiver.title }})</p>
+            <p><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+            <p><strong>Статус:</strong> {{ proposal.get_status_display }}</p>
+            {% if request.user == proposal.ad_receiver.user and proposal.status == 'awaits' %}
+                <form method="post" action="{% url 'ads:update_proposal_status' proposal.id %}">
+                    {% csrf_token %}
+                    <button name="status" value="accepted">Принять</button>
+                    <button name="status" value="rejected">Отклонить</button>
+                </form>
+            {% endif %}
+            {% if request.user == proposal.ad_sender.user and proposal.status == 'awaits' %}
+                <form method="get" action="{% url 'ads:cancel_proposal' proposal.id %}">
+                    <button type="submit">Отменить предложение</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Нет предложений.</p>
+    {% endfor %}
+{% endblock content %}
