@@ -34,6 +34,13 @@
 6. Перейти в браузере по адресу:
    ```
    http://127.0.0.1:8000/
+## Запуск в Docker
+
+1. Установите [Docker](https://www.docker.com/) и [docker-compose](https://docs.docker.com/compose/)
+2. Соберите и запустите контейнер:
+   ```
+   docker-compose up --build
+3. Перейдите по адресу: http://localhost:8000
 ## Основной функционал
 
 - Регистрация и авторизация пользователей 
