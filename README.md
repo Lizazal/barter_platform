@@ -18,28 +18,22 @@
    ```
    git clone https://github.com/Lizazal/barter_platform.git
    cd barter_platform
-
 2. Создать и активировать виртуальное окружение:
    ```
    python -m venv venv
    source venv/bin/activate  # Windows: venv\Scripts\activate
-   
 3. Установить зависимости:
    ```
    pip install -r requirements.txt
-   
 4. Применить миграции:
    ```
    python manage.py migrate
-
 5. Запустить сервер:
    ```
    python manage.py runserver
-
 6. Перейти в браузере по адресу:
    ```
    http://127.0.0.1:8000/
-   
 ## Основной функционал
 
 - Регистрация и авторизация пользователей 
